@@ -1,4 +1,6 @@
-﻿namespace api_ex1.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace api_ex1.Entities
 {
     public class ChiTietHoaDon
     {
@@ -9,7 +11,8 @@
         public SanPham SanPham { get; set; }
         public int SoLuong { get; set; }
         public string DVT { get; set; }
-        public double? ThanhTien { get; set; }
+        [JsonIgnore]
+        public double? ThanhTien { get; set; } = 0;
 
     }
 }
