@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api_ex1.Context;
 
@@ -11,9 +12,11 @@ using api_ex1.Context;
 namespace api_ex1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230712173419_update_v3")]
+    partial class update_v3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,6 +74,7 @@ namespace api_ex1.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("MaGiaoDich")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TenHoaDon")
@@ -80,7 +84,7 @@ namespace api_ex1.Migrations
                     b.Property<DateTime?>("ThoiGianCapNhat")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ThoiGianTao")
+                    b.Property<DateTime>("ThoiGianTao")
                         .HasColumnType("datetime2");
 
                     b.Property<double?>("TongTien")

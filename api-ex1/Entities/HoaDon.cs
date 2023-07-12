@@ -7,18 +7,19 @@ namespace api_ex1.Entities
     {
         public int HoaDonID { get; set; }
         public int KhachHangID { get; set; }
-        public KhachHang KhachHang { get; set; }
+        [JsonIgnore]
+        public KhachHang? KhachHang { get; set; }
         public string TenHoaDon { get; set; }
         [JsonIgnore]
-        public string MaGiaoDich { get; set; } = string.Empty;
+        public string? MaGiaoDich { get; set; } = null;
         [JsonIgnore]
-        public DateTime ThoiGianTao { get; set; } = DateTime.Now;
+        public DateTime? ThoiGianTao { get; set; } = DateTime.Now;
         [JsonIgnore]
         public DateTime? ThoiGianCapNhat { get; set; } = DateTime.Now;
         public string GhiChu { get; set; }
         [JsonIgnore]
         public double? TongTien { get; set; } = 0;
 
-        public IEnumerable<ChiTietHoaDon> ChiTietHoaDon { get; set; }
+        public IEnumerable<ChiTietHoaDon>? ChiTietHoaDon { get; set; }
     }
 }

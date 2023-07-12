@@ -5,10 +5,13 @@ namespace api_ex1.Entities
     public class ChiTietHoaDon
     {
         public int ChiTietHoaDonID { get; set; }
+        [JsonIgnore]
         public int HoaDonID { get; set; }
-        public HoaDon HoaDon { get; set; }
+        [JsonIgnore]
+        public HoaDon? HoaDon { get; set; } = null;
         public int SanPhamID { get; set; }
-        public SanPham SanPham { get; set; }
+        [JsonIgnore]
+        public SanPham? SanPham { get; set; } = null;
         public int SoLuong { get; set; }
         public string DVT { get; set; }
         [JsonIgnore]

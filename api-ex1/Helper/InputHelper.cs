@@ -1,4 +1,6 @@
-﻿using api_ex1.Entities;
+﻿using api_ex1.Context;
+using api_ex1.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace api_ex1.Helper
 {

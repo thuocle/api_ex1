@@ -25,8 +25,8 @@ namespace api_ex1.Services
         }
         private string CreateMaGD()
         {
-            int x = dbContext.HoaDon.Count(x=>x.ThoiGianTao.Date == DateTime.Now.Date);
-            string mgd = $"{DateTime.Now:yyyyMMdd}_{x:D3}";
+            int x = dbContext.HoaDon.Count(x=>x.ThoiGianTao.Value.Date == DateTime.Now.Date);
+            string mgd = $"{DateTime.Now:yyyyMMdd}_{x+1:D3}";
             return mgd;
         }
         private void UpdateTongTien(HoaDon hd, double? tt) 
@@ -36,12 +36,8 @@ namespace api_ex1.Services
             dbContext.SaveChanges();
         }
         #endregion
-        public ErrorMesssage ThemChiTietHD(ChiTietHoaDon ct)
+        public ErrorMesssage ThemChiTietHD(ChiTietHoaDon ct, HoaDon hd)
         {
-            using (var trans = dbContext.Database.BeginTransaction())
-            {
-                try
-                {
                     if (!InputHelper.CheckChiTietHD(ct))
                     {
                         return ErrorMesssage.DuLieuSai;
@@ -50,20 +46,14 @@ namespace api_ex1.Services
                     {
                         return ErrorMesssage.ChuaTonTaiSanPham;
                     }
+                    ct.HoaDonID = hd.HoaDonID;
                     ct.ThanhTien = ct.SoLuong * isSanPham(ct).GiaThanh;
                     dbContext.Add(ct);
                     dbContext.SaveChanges();
-                    // Commit transaction
-                    trans.Commit();
-                    return ErrorMesssage.ThanhCong;
-                }
-                catch (Exception)
-                {
-                    // Nếu có lỗi xảy ra, rollback transaction và ném ra ngoại lệ
-                    trans.Rollback();
-                    throw;
-                }
-            }
+                    UpdateTongTien(hd, ct.ThanhTien);
+
+            // Commit transaction
+            return ErrorMesssage.ThanhCong;
         }
 
         public ErrorMesssage ThemHoaDon(HoaDon hd)
@@ -82,11 +72,7 @@ namespace api_ex1.Services
                     }
                     hd.MaGiaoDich = CreateMaGD();
                     dbContext.Add(hd);
-                    foreach (var ct in hd.ChiTietHoaDon)
-                    {
-                        ThemChiTietHD(ct);
-                        UpdateTongTien(hd, ct.ThanhTien);
-                    }
+                    dbContext.SaveChanges();
                     trans.Commit();
                     return ErrorMesssage.ThanhCong;
                     // Commit transaction
@@ -99,6 +85,13 @@ namespace api_ex1.Services
                 }
             }
 
+        }
+
+        public ErrorMesssage ThemLoai(LoaiSanPham loai)
+        {
+            dbContext.Add(loai);
+            dbContext.SaveChanges();
+            return ErrorMesssage.ThanhCong;
         }
     }
 }
