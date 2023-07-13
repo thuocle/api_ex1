@@ -6,7 +6,7 @@ namespace api_ex1.IServices
     public interface IHoaDonServices
     {
         ErrorMesssage ThemHoaDon(HoaDon hd);
-        ErrorMesssage ThemChiTietHD(ChiTietHoaDon ct, HoaDon hd);
-        ErrorMesssage ThemLoai(LoaiSanPham loai);
+        ErrorMesssage ThemChiTietHD(List<ChiTietHoaDon> lstCT, HoaDon hd);
+        ErrorMesssage CapNhatHoaDon(HoaDon hd, IEnumerable<ChiTietHoaDon> lstCTNew);
     }
 }

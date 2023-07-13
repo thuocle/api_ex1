@@ -9,14 +9,16 @@ namespace api_ex1.Entities
         public int KhachHangID { get; set; }
         [JsonIgnore]
         public KhachHang? KhachHang { get; set; }
-        public string TenHoaDon { get; set; }
+        [JsonIgnore]
+        public string? TenHoaDon { get; set; }
         [JsonIgnore]
         public string? MaGiaoDich { get; set; } = null;
         [JsonIgnore]
         public DateTime? ThoiGianTao { get; set; } = DateTime.Now;
         [JsonIgnore]
         public DateTime? ThoiGianCapNhat { get; set; } = DateTime.Now;
-        public string GhiChu { get; set; }
+        [JsonIgnore]
+        public string? GhiChu { get; set; }
         [JsonIgnore]
         public double? TongTien { get; set; } = 0;
 

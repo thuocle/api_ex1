@@ -8,10 +8,10 @@ namespace api_ex1.Entities
         [JsonIgnore]
         public int HoaDonID { get; set; }
         [JsonIgnore]
-        public HoaDon? HoaDon { get; set; } = null;
+        public HoaDon? HoaDon { get; set; }
         public int SanPhamID { get; set; }
         [JsonIgnore]
-        public SanPham? SanPham { get; set; } = null;
+        public SanPham? SanPham { get; set; }
         public int SoLuong { get; set; }
         public string DVT { get; set; }
         [JsonIgnore]

@@ -85,3 +85,4 @@ D:\Máy tính\API-SOLUTION\api_ex1\api-ex1\obj\Debug\net6.0\refint\api-ex1.dll
 D:\Máy tính\API-SOLUTION\api_ex1\api-ex1\obj\Debug\net6.0\api-ex1.pdb
 D:\Máy tính\API-SOLUTION\api_ex1\api-ex1\obj\Debug\net6.0\api-ex1.genruntimeconfig.cache
 D:\Máy tính\API-SOLUTION\api_ex1\api-ex1\obj\Debug\net6.0\ref\api-ex1.dll
+D:\Máy tính\API-SOLUTION\api_ex1\api-ex1\bin\Debug\net6.0\Newtonsoft.Json.dll
