@@ -47,6 +47,20 @@ namespace api_ex1.Controllers
             }
             return BadRequest("Cap nhat hoa don that bai");
         }
-     
+        [HttpDelete("XoaHoaDon")]
+        public IActionResult XoaHoaDon([FromQuery] int hdID)
+        {
+            var ret = _hoaDonServices.XoaHoaDon(hdID);
+            if (ret == Constant.ErrorMesssage.ThanhCong)
+            {
+                return Ok("Xoa thanh cong");
+            }
+            return BadRequest("Xoa hoa don that bai");
+        }
+        [HttpGet("GetListHoaDon")]
+        public IActionResult GetListHD([FromQuery] string? key, [FromQuery] int pageSize = -1, [FromQuery] int pageNumber = 1)
+        {
+            return Ok(_hoaDonServices.GetListHoaDon(key, pageSize, pageNumber));
+        }
     }
 }

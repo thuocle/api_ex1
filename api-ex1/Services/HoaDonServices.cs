@@ -1,14 +1,13 @@
 ﻿using api_ex1.Constant;
 using api_ex1.Context;
 using api_ex1.Entities;
-using api_ex1.IServices;
 using api_ex1.Helper;
-using System.Data.Common;
-using Microsoft.EntityFrameworkCore.Storage;
+using api_ex1.IServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace api_ex1.Services
 {
-    public class HoaDonServices : IHoaDonServices                                                                                                 
+    public class HoaDonServices : IHoaDonServices
     {
         private readonly AppDbContext dbContext;
 
@@ -19,7 +18,7 @@ namespace api_ex1.Services
         #region Private method
         private bool isKhachHang(HoaDon hd)
         {
-            return dbContext.KhachHang.Any(x=>x.KhachHangID == hd.KhachHangID);
+            return dbContext.KhachHang.Any(x => x.KhachHangID == hd.KhachHangID);
         }
         private HoaDon GetHoaDon(int hdID)
         {
@@ -27,29 +26,26 @@ namespace api_ex1.Services
         }
         private SanPham isSanPham(ChiTietHoaDon ct)
         {
-            return dbContext.SanPham.FirstOrDefault(x=>x.SanPhamID == ct.SanPhamID);
+            return dbContext.SanPham.FirstOrDefault(x => x.SanPhamID == ct.SanPhamID);
         }
         private string CreateMaGD()
         {
-            int x = dbContext.HoaDon.Count(x=>x.ThoiGianTao.Value.Date == DateTime.Now.Date);
-            string mgd = $"{DateTime.Now:yyyyMMdd}_{x+1:D3}";
+            int x = dbContext.HoaDon.Count(x => x.ThoiGianTao.Value.Date == DateTime.Now.Date);
+            string mgd = $"{DateTime.Now:yyyyMMdd}_{x + 1:D3}";
             return mgd;
         }
-        private void DeleteHD(HoaDon hd) 
+        private void DeleteHD(HoaDon hd)
         {
             dbContext.Remove(hd);
             dbContext.SaveChanges();
         }
-        private void UpdateTongTien(HoaDon hd) 
+        private void UpdateTongTien(HoaDon hd)
         {
-            hd.TongTien = dbContext.ChiTietHoaDon.Where(x=>x.HoaDonID == hd.HoaDonID).Sum(x=>x.ThanhTien);
+            hd.TongTien = dbContext.ChiTietHoaDon.Where(x => x.HoaDonID == hd.HoaDonID).Sum(x => x.ThanhTien);
             dbContext.Update(hd);
             dbContext.SaveChanges();
         }
-        private void ThemCTHoaDonSingle(ChiTietHoaDon ct)
-        {
 
-        }
         #endregion
         public ErrorMesssage ThemChiTietHD(List<ChiTietHoaDon> lstCT, HoaDon hd)
         {
@@ -126,44 +122,44 @@ namespace api_ex1.Services
                 {
                     var hdNow = GetHoaDon(hd.HoaDonID);
                     hdNow.ThoiGianCapNhat = DateTime.Now;
-                    var lstCTNow = dbContext.ChiTietHoaDon.Where(x=>x.HoaDonID == hdNow.HoaDonID);
-                    if(hdNow == null)
+                    var lstCTNow = dbContext.ChiTietHoaDon.Where(x => x.HoaDonID == hdNow.HoaDonID);
+                    if (hdNow == null)
                     {
                         return ErrorMesssage.ChuaTonTaiHD;
                     }
-                    //bot san pham trong hoa don
+                    //bot san pham đã không còn tồn tại trong hoa don
                     foreach (var item in lstCTNow)
                     {
-                        if(!lstCTNew.Any(x=>x.SanPhamID == item.SanPhamID))
+                        if (!lstCTNew.Any(x => x.SanPhamID == item.SanPhamID))
                         {
                             dbContext.Remove(item);
                         }
                     }
-                    //them san pham trong hoa don hoac sua
+                    //them san pham mới vào hóa đơn, hoặc sửa sản phẩm trong hóa đơn tùy vào sanphamid
                     foreach (var item in lstCTNew)
                     {
-                            var ctNow = lstCTNow.FirstOrDefault(x => x.SanPhamID == item.SanPhamID);
-                            //them
-                            if (ctNow == null)
+                        var ctNow = lstCTNow.FirstOrDefault(x => x.SanPhamID == item.SanPhamID);
+                        //them
+                        if (ctNow == null)
+                        {
+                            if (isSanPham(item) == null)
                             {
-                                if (isSanPham(item) == null)
-                                {
-                                    return ErrorMesssage.ChuaTonTaiSanPham;
-                                }
-                                item.HoaDonID = hdNow.HoaDonID;
-                                item.ThanhTien = item.SoLuong * isSanPham(item).GiaThanh;
-                                dbContext.ChiTietHoaDon.Add(item);
-                                dbContext.SaveChanges();
+                                return ErrorMesssage.ChuaTonTaiSanPham;
                             }
-                            else
-                            {
-                                //sua
-                                ctNow.SoLuong = item.SoLuong;
-                                ctNow.DVT = item.DVT;
-                                ctNow.ThanhTien = item.SoLuong * isSanPham(item).GiaThanh;
-                                dbContext.Update(ctNow);
-                                dbContext.SaveChanges();
-                            }
+                            item.HoaDonID = hdNow.HoaDonID;
+                            item.ThanhTien = item.SoLuong * isSanPham(item).GiaThanh;
+                            dbContext.ChiTietHoaDon.Add(item);
+                            dbContext.SaveChanges();
+                        }
+                        else
+                        {
+                            //sua
+                            ctNow.SoLuong = item.SoLuong;
+                            ctNow.DVT = item.DVT;
+                            ctNow.ThanhTien = item.SoLuong * isSanPham(item).GiaThanh;
+                            dbContext.Update(ctNow);
+                            dbContext.SaveChanges();
+                        }
                     }
                     //
                     UpdateTongTien(hdNow);
@@ -181,6 +177,29 @@ namespace api_ex1.Services
                 }
             }
 
+        }
+
+        public ErrorMesssage XoaHoaDon(int hdID)
+        {
+            var hd = dbContext.HoaDon.FirstOrDefault(x => x.HoaDonID == hdID);
+            if (hd == null)
+            {
+                return ErrorMesssage.ChuaTonTaiHD;
+            }
+            dbContext.Remove(hd);
+            dbContext.SaveChanges();
+            return ErrorMesssage.ThanhCong;
+        }
+
+        public IEnumerable<HoaDon> GetListHoaDon(string? key, int pageSize, int pageNumber)
+        {
+            var lstHD = dbContext.HoaDon.Include(x=>x.ChiTietHoaDon).AsQueryable();
+            if (!string.IsNullOrEmpty(key))
+            {
+                lstHD = lstHD.Where(x => x.TenHoaDon.ToLower().Contains(key.ToLower()));
+            }
+            lstHD = lstHD.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+            return lstHD;
         }
     }
 }
