@@ -37,6 +37,7 @@ namespace api_ex1.Controllers
                 return BadRequest("Them hoa don that bai");
             }
         }
+
         [HttpPut("CapNhatHoaDon")]
         public IActionResult SuaHoaDon([FromBody] HoaDonDTO hoaDonDTO)
         {
@@ -47,6 +48,7 @@ namespace api_ex1.Controllers
             }
             return BadRequest("Cap nhat hoa don that bai");
         }
+
         [HttpDelete("XoaHoaDon")]
         public IActionResult XoaHoaDon([FromQuery] int hdID)
         {
@@ -57,10 +59,36 @@ namespace api_ex1.Controllers
             }
             return BadRequest("Xoa hoa don that bai");
         }
-        [HttpGet("GetListHoaDon")]
-        public IActionResult GetListHD([FromQuery] string? key, [FromQuery] int pageSize = -1, [FromQuery] int pageNumber = 1)
+
+        [HttpGet("GetListHoaDonByTime")]
+        public IActionResult GetListHD([FromQuery] Pagination page)
         {
-            return Ok(_hoaDonServices.GetListHoaDon(key, pageSize, pageNumber));
+            return Ok(_hoaDonServices.GetListHoaDonByTime(page));
         }
+
+        [HttpGet("SearchHoaDonByKey")]
+        public IActionResult SearchHoaDonByKey([FromQuery] string? name, [FromQuery] Pagination page)
+        {
+            return Ok(_hoaDonServices.SearchHoaDonByKey(name, page));
+        }
+
+        [HttpGet("FilterHoaDonByMonthYear")]
+        public IActionResult FilterHoaDonByMonthYear([FromQuery] int? month, [FromQuery] int? year, [FromQuery] Pagination page)
+        {
+            return Ok(_hoaDonServices.FilterHoaDonByMonthYear(month, year, page));
+        }
+
+        [HttpGet("FilterHoaDonByDateRange")]
+        public IActionResult FilterHoaDonByDateRange([FromQuery] DateTime? dateMin, [FromQuery] DateTime? dateMax, [FromQuery] Pagination page)
+        {
+            return Ok(_hoaDonServices.FilterHoaDonByDateRange(dateMin, dateMax, page));
+        }
+
+        [HttpGet("FilterHoaDonByTotalRange")]
+        public IActionResult FilterHoaDonByTotalRange([FromQuery] double? totalMin, [FromQuery] double? totalMax, [FromQuery] Pagination page)
+        {
+            return Ok(_hoaDonServices.FilterHoaDonByTotalRange(totalMin, totalMax, page));
+        }
+
     }
 }

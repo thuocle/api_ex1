@@ -4,6 +4,7 @@ using api_ex1.Entities;
 using api_ex1.Helper;
 using api_ex1.IServices;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace api_ex1.Services
 {
@@ -191,15 +192,66 @@ namespace api_ex1.Services
             return ErrorMesssage.ThanhCong;
         }
 
-        public IEnumerable<HoaDon> GetListHoaDon(string? key, int pageSize, int pageNumber)
+        public PageInfo<HoaDon> GetListHoaDonByTime(Pagination page)
         {
-            var lstHD = dbContext.HoaDon.Include(x=>x.ChiTietHoaDon).AsQueryable();
-            if (!string.IsNullOrEmpty(key))
+            var lstHD = dbContext.HoaDon.OrderByDescending(x=>x.ThoiGianTao).Include(x=>x.ChiTietHoaDon).AsQueryable();
+            var data = PageInfo<HoaDon>.ToPageInfo(page, lstHD);
+            page.TotalItem = lstHD.Count();
+            return new PageInfo<HoaDon>(page, data);
+        }
+        public PageInfo<HoaDon> SearchHoaDonByKey(string? name, Pagination page)
+        {
+            var lstHD = dbContext.HoaDon.Include(x => x.ChiTietHoaDon).AsQueryable();
+            if (!string.IsNullOrEmpty(name))
             {
-                lstHD = lstHD.Where(x => x.TenHoaDon.ToLower().Contains(key.ToLower()));
+                lstHD = lstHD.Where(x => x.TenHoaDon.ToLower().Contains(name.ToLower())|| x.MaGiaoDich.ToLower().Contains(name.ToLower()));
             }
-            lstHD = lstHD.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
-            return lstHD;
+            var data = PageInfo<HoaDon>.ToPageInfo(page, lstHD);
+            page.TotalItem = lstHD.Count();
+            return new PageInfo<HoaDon>(page, data);
+        }
+        public PageInfo<HoaDon> FilterHoaDonByMonthYear(int? month, int? year, Pagination page)
+        {
+            var lstHD = dbContext.HoaDon.Include(x => x.ChiTietHoaDon).AsQueryable();
+            if (month.HasValue && !year.HasValue)
+            {
+                lstHD = lstHD.Where(x=>x.ThoiGianTao.Value.Month==month);
+            }
+            else if (!month.HasValue && year.HasValue)
+            {
+                lstHD = lstHD.Where(x => x.ThoiGianTao.Value.Year == year);
+            }
+            else if(month.HasValue && year.HasValue)
+            {
+                lstHD = lstHD.Where(x => x.ThoiGianTao.Value.Month == month && x.ThoiGianTao.Value.Year == year);
+            }
+            var data = PageInfo<HoaDon>.ToPageInfo(page, lstHD);
+            page.TotalItem = lstHD.Count();
+            return new PageInfo<HoaDon>(page, data);
+        }
+
+        public PageInfo<HoaDon> FilterHoaDonByDateRange(DateTime? dateMin, DateTime? dateMax, Pagination page)
+        {
+            var lstHD = dbContext.HoaDon.Include(x => x.ChiTietHoaDon).AsQueryable();
+            if (dateMin.HasValue && dateMax.HasValue)
+            {
+                lstHD = lstHD.Where(x => x.ThoiGianTao.Value.Date >=dateMin && x.ThoiGianTao.Value.Date <= dateMax);
+            }
+            var data = PageInfo<HoaDon>.ToPageInfo(page, lstHD);
+            page.TotalItem = lstHD.Count();
+            return new PageInfo<HoaDon>(page, data);
+        }
+
+        public PageInfo<HoaDon> FilterHoaDonByTotalRange(double? totalMin, double? totalMax, Pagination page)
+        {
+            var lstHD = dbContext.HoaDon.Include(x => x.ChiTietHoaDon).AsQueryable();
+            if (totalMin.HasValue && totalMax.HasValue)
+            {
+                lstHD = lstHD.Where(x => x.TongTien.Value >= totalMin && x.TongTien.Value <= totalMax);
+            }
+            var data = PageInfo<HoaDon>.ToPageInfo(page, lstHD);
+            page.TotalItem = lstHD.Count();
+            return new PageInfo<HoaDon>(page, data);
         }
     }
 }
